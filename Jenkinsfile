@@ -6,6 +6,11 @@ pipeline {
         maven 'Maven3'
     }
 
+    environment {
+        DOCKERHUB_USER = 'souhajomaa1412'
+        IMAGE_NAME = 'spring-petclinic'
+    }
+
     stages {
         stage('Git Checkout') {
             steps {
@@ -31,6 +36,34 @@ pipeline {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('OWASP Dependency Check') {
+            steps {
+                dependencyCheck additionalArguments: '--scan . --format HTML --format XML', odcInstallation: 'DP-Check'
+                dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest ."
+            }
+        }
+
+        stage('Trivy Scan') {
+            steps {
+                sh "trivy image --exit-code 0 --severity HIGH,CRITICAL ${DOCKERHUB_USER}/${IMAGE_NAME}:latest"
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
+                    sh "docker push ${DOCKERHUB_USER}/${IMAGE_NAME}:latest"
                 }
             }
         }
