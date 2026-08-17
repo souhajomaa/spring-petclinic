@@ -43,13 +43,14 @@ pipeline {
         stage('OWASP Dependency Check') {
             steps {
                dependencyCheck(
-                   additionalArguments: '--scan . --format HTML --format XML',
+                   additionalArguments: '--scan . --format XML --format HTML --out .'
                    odcInstallation: 'DP-Check',
                    nvdCredentialsId: 'nvd-api-key'
         )
 
                dependencyCheckPublisher(
-                  pattern: 'dependency-check-report.xml'
+                  pattern: '**/dependency-check-report.xml',
+                  skipNoReportFiles: false
         )
              }
         }
