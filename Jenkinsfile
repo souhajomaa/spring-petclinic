@@ -42,11 +42,16 @@ pipeline {
 
         stage('OWASP Dependency Check') {
             steps {
-                retry(2) {
-            dependencyCheck additionalArguments: '--scan . --format HTML --format XML', odcInstallation: 'DP-Check'
-        }
-           dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-            }
+               dependencyCheck(
+                   additionalArguments: '--scan . --format HTML --format XML',
+                   odcInstallation: 'DP-Check',
+                   nvdCredentialsId: 'nvd-api-key'
+        )
+
+               dependencyCheckPublisher(
+                  pattern: 'dependency-check-report.xml'
+        )
+             }
         }
 
         stage('Build Docker Image') {
