@@ -2,8 +2,7 @@
 FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 COPY . .
-RUN --mount=type=cache,target=/root/.m2 ./mvnw clean package -DskipTests
-
+RUN ./mvnw clean package -DskipTests
 # Stage 2: Run
 FROM eclipse-temurin:21-jre
 WORKDIR /app
