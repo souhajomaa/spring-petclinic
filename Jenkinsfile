@@ -49,10 +49,10 @@ pipeline {
            }
        }
 
-        stage('Build Docker Image') {
-            steps {
-                sh "docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest ."
-            }
+       stage('Build Docker Image') {
+           steps {
+        sh 'DOCKER_BUILDKIT=1 docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest .'
+           }
         }
 
         stage('Trivy Scan') {
