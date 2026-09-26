@@ -5,7 +5,12 @@ pipeline {
         jdk 'JDK17'
         maven 'Maven3'
     }
-
+     stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+    }
     environment {
         DOCKERHUB_USER = 'souhajomaa1412'
         IMAGE_NAME = 'spring-petclinic'
