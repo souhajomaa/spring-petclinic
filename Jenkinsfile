@@ -5,11 +5,7 @@ pipeline {
         jdk 'JDK17'
         maven 'Maven3'
     }
-     stages {
-        stage('Clean Workspace') {
-            steps {
-                cleanWs()
-            }
+   
     }
     environment {
         DOCKERHUB_USER = 'souhajomaa1412'
@@ -25,6 +21,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                sh 'rm -f dependency-check-report.html dependency-check-report.xml'
                 sh 'mvn clean package -DskipTests'
             }
         }
