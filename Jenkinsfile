@@ -5,8 +5,7 @@ pipeline {
         jdk 'JDK17'
         maven 'Maven3'
     }
-   
-    }
+
     environment {
         DOCKERHUB_USER = 'souhajomaa1412'
         IMAGE_NAME = 'spring-petclinic'
@@ -43,15 +42,15 @@ pipeline {
         }
 
         stage('OWASP Dependency Check') {
-           steps {
-        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
-            dependencyCheck additionalArguments: "--scan . --format HTML --format XML --nvdApiKey ${NVD_API_KEY}", odcInstallation: 'DP-Check'
+            steps {
+                withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
+                    dependencyCheck additionalArguments: "--scan . --format HTML --format XML --nvdApiKey ${NVD_API_KEY}", odcInstallation: 'DP-Check'
+                }
+                dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            }
         }
-        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-           }
-       }
 
-      stage('Build Docker Image') {
+        stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest ."
             }
