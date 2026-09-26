@@ -1,0 +1,6 @@
+dependency-check-report.html
+dependency-check-report.xml
+target/
+.git/
+.gitignore
+*.log
