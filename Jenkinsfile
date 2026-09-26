@@ -58,8 +58,8 @@ pipeline {
 
         stage('Trivy Scan') {
             steps {
-                sh "trivy image --exit-code 0 --severity HIGH,CRITICAL ${DOCKERHUB_USER}/${IMAGE_NAME}:latest"
-            }
+                 sh "trivy image --timeout 15m --exit-code 0 --severity HIGH,CRITICAL ${DOCKERHUB_USER}/${IMAGE_NAME}:latest"
+             }
         }
 
         stage('Push to DockerHub') {
