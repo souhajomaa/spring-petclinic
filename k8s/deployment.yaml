@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-devsecops
+  labels:
+    app: spring-devsecops
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spring-devsecops
+  template:
+    metadata:
+      labels:
+        app: spring-devsecops
+    spec:
+      containers:
+      - name: spring-devsecops
+        image: souhajomaa1412/spring-petclinic:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: 100m
+            memory: 384Mi
+          limits:
+            memory: 768Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-devsecops
+spec:
+  type: LoadBalancer
+  selector:
+    app: spring-devsecops
+  ports:
+  - port: 80
+    targetPort: 8080
