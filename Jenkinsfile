@@ -70,5 +70,15 @@ pipeline {
                 }
             }
         }
+        
+        stage('Deploy to AKS') {
+            steps {
+                withCredentials([file(credentialsId: 'aks-kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh 'kubectl apply -f k8s/deployment.yaml'
+                    sh 'kubectl rollout restart deployment/spring-devsecops'
+                    sh 'kubectl rollout status deployment/spring-devsecops --timeout=300s'
+                }
+            }
+        }
     }
 }
